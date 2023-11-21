@@ -1,3 +1,12 @@
+install.packages("nflreadr")
+install.packages("tidyverse")
+install.packages("gt")
+install.packages("gtExtras")
+library(nflreadr)
+library(tidyverse)
+library(gt)
+library(gtExtras)
+
 pbp <- load_participation(2023, include_pbp = TRUE)
 
 names(pbp)
