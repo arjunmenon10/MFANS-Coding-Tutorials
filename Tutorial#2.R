@@ -42,7 +42,7 @@ covrates <- pbp |>
   ) |> 
   ungroup() |> 
   group_by(defteam) |> 
-  filter(defense_coverage_type%in% c('Cover 0', 'Cover 1', 'Cover 2', 'Cover 3', 'Cover 4', 'Cover 6', 'Cover 2 Man')) |> 
+  filter(defense_coverage_type != "Other") |> 
   mutate(totplays = sum(plays),
          rates = plays/totplays) |> 
   select(-plays, -totplays) |> 
