@@ -7,12 +7,15 @@ library(ggimage)
 library(ggthemes)
 library(ggtext)
 
+### load in data
 pbp <- load_participation(2023, include_pbp = TRUE)
 
+### filter to just passes
 pbp <- pbp |> filter(pass == 1)
 
 unique(pbp$defense_coverage_type)
 
+### change the names of coverages to make it nicer
 pbp <- pbp |> 
   mutate(
     defense_coverage_type = case_when(
@@ -30,6 +33,7 @@ pbp <- pbp |>
 pbp |> filter(qb_scramble == 1) |> select(qb_scramble, defense_coverage_type)
 pbp |> filter(sack == 1) |> select(sack, defense_coverage_type)
 
+### calculate coverage rates
 covrates <- pbp |> 
   group_by(defteam, defense_coverage_type) |> 
   summarise(
@@ -47,6 +51,7 @@ covrates <- pbp |>
 
 covrates[is.na(covrates)] <- 0
 
+### entropy calculation
 nug = 10^(-3)
 
 covrates <- covrates |> 
@@ -65,6 +70,7 @@ defEPA <- pbp |>
 shannon_all <- left_join(covrates, defEPA, by = 'defteam') |> 
   left_join(teams_colors_logos, by = c('defteam' = 'team_abbr'))
 
+### make the graph
 shannon_all |> 
   ggplot(aes(x = shannon, y = EPAp))+
   geom_image(image = shannon_all$team_logo_espn, asp = 16/9, size = 0.05)+
@@ -83,6 +89,7 @@ shannon_all |>
   scale_x_continuous(breaks = scales::pretty_breaks(n=8))
 ggsave('coventropy.png', width = 14, height = 10, dpi = "retina")
 
+### coverage rates and stats for each defense and coverage
 covratesEPA <- pbp |> 
   group_by(defteam, defense_coverage_type) |> 
   summarise(
